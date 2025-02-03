@@ -7,6 +7,28 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <h1><%= data %></h1>
+  <div id="modal-background"></div>
+  <div id="wrap">
+    <header>
+      <h1>CRUD</h1>
+    </header>
+    <main>
+      <ul id="post-list">
+        <% if(postData.length !== 0) { %>
+          <% postData.forEach((post) => { %>
+            <li class="post-item">
+              <div class="post-title"><%= post.title %></div>
+              <div class="post-name"><%= post.name %></div>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li> 게시물 없음 </li>
+        <% } %>
+      </ul>
+      <div id="action-button-container">
+        <button id="action-button-write">글 쓰기</button>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
