@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
   res.render('index', { postData });
 })
 
+app.post('/post', (req, res) => {
+  postData.push(req.body);
+  res.redirect('/');
+})
+
 app.listen(PORT, () => {
   console.log(`Server on... http://localhost:${PORT}`);
 })
