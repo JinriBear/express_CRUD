@@ -8,14 +8,14 @@
         </svg>
       </button>
     </div>
-    <div class="modal-post-write">
-      <form id="write-form" action="/post" method="POST">
+    <div id="modal-post-write">
+      <form id="write-form" action="/posts" method="POST">
         <div class="form-input-container">
-          <input id="post-title" name="title" type="text" placeholder="제목">
-          <textarea id="post-content" name="content" rows="10"  placeholder="내용"></textarea>
+          <input id="form-post-title" name="title" type="text" placeholder="제목">
+          <textarea id="form-post-content" name="content" rows="10"  placeholder="내용"></textarea>
           <div class="form-input-guest">
-            <input id="post-name" name="name" type="text" placeholder="이름">
-            <input id="post-password" name="password" type="password" maxlength="4" placeholder="비밀번호">
+            <input id="form-post-name" name="name" type="text" placeholder="이름">
+            <input id="form-post-password" name="password" type="password" maxlength="4" placeholder="비밀번호">
           </div>
           <div class="post-write-button-container">
             <button type="button" id="post-write-button">작성</button>
@@ -23,22 +23,36 @@
         </div>
       </form>
     </div>
+    <div id="post-detail-container">
+      <h2 id="post-detail-title"></h2>
+      <div id="post-detail-name"></div>
+      <p id="post-detail-content"></p>
+    </div>
   </div>
 </div>
 
 <script>
   const modalBg = document.querySelector('#modal-background');
   const closeModalBtn = document.querySelector('#modal-close-button');
+  const writeFormContainer = document.querySelector('#modal-post-write');
   const writeForm = document.querySelector('#write-form');
   const postWriteBtn = document.querySelector('#post-write-button');
+  const postDetailContainer = document.querySelector('#post-detail-container');
 
   const clearForm = () => {
     for(item of writeForm.elements)
       item.value = "";
   };
 
+  const clearDetail = () => {
+    for(item of postDetailContainer.children)
+      item.innerText = "";
+  }
+
   closeModalBtn.addEventListener('click', () => {
     modalBg.style.display = "none"
+    clearForm()
+    clearDetail();
   });
 
   postWriteBtn.addEventListener('click', () => {
@@ -74,6 +88,4 @@
 
     writeForm.submit();
   });
-
-  
 </script>

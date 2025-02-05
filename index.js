@@ -7,25 +7,58 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true}));
 
-const postData = [
+const postsData = [
   {
+    id: 1,
     title: "테스트 제목1",
     content: "테스트 내용1",
-    name: "비회원"
+    name: "비회원",
+    password: "1234"
   },
   {
+    id: 2,
     title: "테스트 제목2",
     content: "테스트 내용2",
-    name: "비회원"
+    name: "비회원",
+    password: "1234"
   }
 ];
 
+let id = 3;
+
 app.get('/', (req, res) => {
-  res.render('index', { postData });
+  const postsList = postsData.map(post => {
+    return {
+      id: post.id,
+      title: post.title,
+      name: post.name,
+    }
+  });
+  res.render('index', { postsList });
 })
 
-app.post('/post', (req, res) => {
-  postData.push(req.body);
+app.get('/posts/:id', (req, res) => {
+  const postId = Number(req.params.id);
+  const findPost = postsData.find(post => post.id === postId);
+  res.json({
+    title: findPost.title,
+    content: findPost.content,
+    name: findPost.name
+  });
+})
+
+app.post('/posts', (req, res) => {
+  const { title, content, name, password } = req.body
+  const post = {
+    id,
+    title,
+    content,
+    name,
+    password
+  };
+
+  postsData.push(post);
+  id++;
   res.redirect('/');
 })
 
