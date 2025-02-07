@@ -42,6 +42,7 @@ app.get('/posts/:id', (req, res) => {
   const postId = Number(req.params.id);
   const findPost = postsData.find(post => post.id === postId);
   res.json({
+    id: findPost.id,
     title: findPost.title,
     content: findPost.content,
     name: findPost.name
@@ -61,6 +62,21 @@ app.post('/posts', (req, res) => {
   postsData.push(post);
   id++;
   res.redirect('/');
+})
+
+app.delete('/posts/:id', (req, res) => {
+  const postId = Number(req.params.id);
+  const postPassword = req.body.password;
+  const searchPost = postsData.find(post => post.id === postId);
+  const searchPostIndex = postsData.findIndex(post => post.id === postId);
+
+  if(searchPost.password !== postPassword) {
+    res.status(401).json({ message: '비밀번호가 틀렸습니다.'});
+    return;
+  }
+  
+  postsData.splice(searchPostIndex, 1);
+  res.json({ message: '게시글이 삭제되었습니다.' });
 })
 
 app.listen(PORT, () => {

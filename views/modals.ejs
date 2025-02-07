@@ -18,15 +18,29 @@
             <input id="form-post-password" name="password" type="password" maxlength="4" placeholder="비밀번호">
           </div>
           <div class="post-write-button-container">
-            <button type="button" id="post-write-button">작성</button>
+            <button type="button" id="post-write-button" class="btn">작성</button>
           </div>
         </div>
       </form>
     </div>
-    <div id="post-detail-container">
-      <h2 id="post-detail-title"></h2>
-      <div id="post-detail-name"></div>
-      <p id="post-detail-content"></p>
+    <div id="modal-post-detail">
+      <div id="post-detail-container">
+        <h2 id="post-detail-title"></h2>
+        <div id="post-detail-name"></div>
+        <p id="post-detail-content"></p>
+      </div>
+      <div id="detail-action-button-container">
+        <button class="btn">수정</button>
+        <button id="post-delete-button" class="btn">삭제</button>
+      </div>
+      <div id="post-delete-confirm">
+        <p>정말 삭제하시겠습니까?</p>
+        <input id="post-delete-password" type="password" maxlength="4" placeholder="비밀번호">
+        <div id="post-delete-confirm-buttons">
+          <button id="post-delete-cancel-button" class="btn">취소</button>
+          <button id="post-delete-confirm-button" class="btn">삭제</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -37,21 +51,31 @@
   const writeFormContainer = document.querySelector('#modal-post-write');
   const writeForm = document.querySelector('#write-form');
   const postWriteBtn = document.querySelector('#post-write-button');
+  const modalPostDetail = document.querySelector('#modal-post-detail');
   const postDetailContainer = document.querySelector('#post-detail-container');
+  const postDeleteBtn = document.querySelector('#post-delete-button');
+  const deleteConfirmModal = document.querySelector('#post-delete-confirm');
+  const postDeletePaswword = document.querySelector('#post-delete-password');
+  const deleteCancelBtn = document.querySelector('#post-delete-cancel-button');
+  const deleteConfirmBtn = document.querySelector('#post-delete-confirm-button');
 
   const clearForm = () => {
     for(item of writeForm.elements)
-      item.value = "";
+      item.value = '';
   };
 
   const clearDetail = () => {
     for(item of postDetailContainer.children)
-      item.innerText = "";
+      item.innerText = '';
   }
 
   closeModalBtn.addEventListener('click', () => {
-    modalBg.style.display = "none"
-    clearForm()
+    modalBg.style.display = 'none';
+    writeFormContainer.style.display = 'none';
+    modalPostDetail.style.display = 'none';
+    deleteConfirmModal.style.display = 'none';
+    postDeletePaswword.value = '';
+    clearForm();
     clearDetail();
   });
 
@@ -61,22 +85,22 @@
     const name = writeForm['name'].value;
     const password = writeForm['password'].value;
 
-    if(title === "") {
+    if(title === '') {
       alert('제목을 입력해주세요');
       return;
     };
 
-    if(content === "") {
+    if(content === '') {
       alert('내용을 입력해주세요');
       return;
     };
 
-    if(name === "") {
+    if(name === '') {
       alert('이름을 입력해주세요');
       return;
     };
 
-    if(password === "") {
+    if(password === '') {
       alert('패스워드를 입력해주세요');
       return;
     };
@@ -86,6 +110,50 @@
       return;
     };
 
+    alert('게시글을 작성하셨습니다.')
     writeForm.submit();
   });
+
+  postDeleteBtn.addEventListener('click', () => {
+    const postId = postDetailContainer.children['post-detail-title'].dataset.id;
+    deleteConfirmModal.style.display = 'flex';
+  })
+
+  deleteCancelBtn.addEventListener('click', () => {
+    deleteConfirmModal.style.display = 'none';
+    postDeletePaswword.value = '';
+  })
+
+  deleteConfirmBtn.addEventListener('click', async () => {
+    const postId = postDetailContainer.children['post-detail-title'].dataset.id
+    const postPassword = postDeletePaswword.value
+
+    if(postPassword === '') {
+      alert('패스워드를 입력해주세요');
+      return;
+    }
+
+    if(postPassword.length !== 4) {
+      alert('패스워드를 4자리 입력해주세요');
+      return;
+    }
+
+    const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type' : 'application/json' ,
+      },
+      body: JSON.stringify({ password : postPassword })
+    });
+
+    if(response.ok) {
+      const result = await response.json();
+      alert(result.message);
+      location.reload();
+    } else {
+      const error = await response.json();
+      alert(error.message);
+    }
+  })
+  
 </script>

@@ -19,6 +19,15 @@ textarea {
 
 /* modal */
 
+.btn {
+  background-color: #9BA88D;
+  border: none;
+  border-radius: 14px;
+  color: #ffffff;
+  padding: 4px 12px;
+  cursor: pointer;;
+}
+
 #modal-background {
   display: none;
   background-color: #00000036;
@@ -94,20 +103,35 @@ textarea {
   flex-direction: row-reverse;
 }
 
-#post-write-button {
-  background-color: #9BA88D;
-  border: none;
-  border-radius: 14px;
-  color: #ffffff;
-  padding: 4px 12px;
-}
-
 #post-detail-name {
   opacity: 0.5;
 }
 
 #post-detail-content {
   margin: 24px 0;
+}
+
+#modal-post-detail {
+  display: none;
+  position: relative;
+}
+
+#post-delete-confirm {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px;
+  border: 2px solid #000000;
+}
+
+#post-delete-confirm-buttons {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #wrap {
