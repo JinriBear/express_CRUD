@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
       name: post.name,
     }
   });
-  res.render('index', { postsList });
+  res.render('index', { postsList, PORT });
 })
 
 app.get('/posts/:id', (req, res) => {

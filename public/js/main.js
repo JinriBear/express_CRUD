@@ -11,7 +11,7 @@ postList.addEventListener('click', async (e) => {
   modalBg.style.display = 'block';
   modalPostDetail.style.display = 'block';
 
-  const result = await fetch(`http://localhost:3000/posts/${postId}`).then(res => res.json());
+  const result = await fetch(`http://localhost:${PORT}/posts/${postId}`).then(res => res.json());
   
   postDetailContainer.children['post-detail-title'].dataset.id = result.id;
   postDetailContainer.children['post-detail-title'].innerText = result.title;
