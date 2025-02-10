@@ -4,6 +4,7 @@ const postList = document.querySelector('#post-list');
 showPostWriteModalBtn.addEventListener('click', () => {
   modalBg.style.display = 'block'
   writeFormContainer.style.display = 'block';
+  writeForm.action = '/posts';
 })
 
 postList.addEventListener('click', async (e) => {

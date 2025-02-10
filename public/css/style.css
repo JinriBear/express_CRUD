@@ -116,8 +116,9 @@ textarea {
   position: relative;
 }
 
-#post-delete-confirm {
+#verify-modal {
   display: none;
+  background-color: #ffffff;
   flex-direction: column;
   gap: 4px;
   justify-content: center;
@@ -129,7 +130,7 @@ textarea {
   border: 2px solid #000000;
 }
 
-#post-delete-confirm-buttons {
+#verify-buttons {
   display: flex;
   justify-content: space-evenly;
 }

@@ -9,7 +9,7 @@
       </button>
     </div>
     <div id="modal-post-write">
-      <form id="write-form" action="/posts" method="POST">
+      <form id="write-form" method="POST">
         <div class="form-input-container">
           <input id="form-post-title" name="title" type="text" placeholder="제목">
           <textarea id="form-post-content" name="content" rows="10"  placeholder="내용"></textarea>
@@ -30,15 +30,15 @@
         <p id="post-detail-content"></p>
       </div>
       <div id="detail-action-button-container">
-        <button class="btn">수정</button>
+        <button id="post-modify-button" class="btn">수정</button>
         <button id="post-delete-button" class="btn">삭제</button>
       </div>
-      <div id="post-delete-confirm">
-        <p>정말 삭제하시겠습니까?</p>
-        <input id="post-delete-password" type="password" maxlength="4" placeholder="비밀번호">
-        <div id="post-delete-confirm-buttons">
-          <button id="post-delete-cancel-button" class="btn">취소</button>
-          <button id="post-delete-confirm-button" class="btn">삭제</button>
+      <div id="verify-modal">
+        <p>비밀번호를 입력하세요</p>
+        <input id="verify-password" type="password" maxlength="4" placeholder="비밀번호">
+        <div id="verify-buttons">
+          <button id="verify-cancel-button" class="btn">닫기</button>
+          <button id="verify-action-button" class="btn">확인</button>
         </div>
       </div>
     </div>
@@ -53,30 +53,34 @@
   const postWriteBtn = document.querySelector('#post-write-button');
   const modalPostDetail = document.querySelector('#modal-post-detail');
   const postDetailContainer = document.querySelector('#post-detail-container');
-  const postDeleteBtn = document.querySelector('#post-delete-button');
-  const deleteConfirmModal = document.querySelector('#post-delete-confirm');
-  const postDeletePaswword = document.querySelector('#post-delete-password');
-  const deleteCancelBtn = document.querySelector('#post-delete-cancel-button');
-  const deleteConfirmBtn = document.querySelector('#post-delete-confirm-button');
+  const detailActionBtnCotnainer = document.querySelector('#detail-action-button-container');
+  const verifyModal = document.querySelector('#verify-modal');
+  const verifyPassword = document.querySelector('#verify-password');
+  const verifyCancelBtn = document.querySelector('#verify-cancel-button');
+  const verifyActionBtn = document.querySelector('#verify-action-button');
 
   const clearForm = () => {
+    writeFormContainer.style.display = 'none';
     for(item of writeForm.elements)
       item.value = '';
   };
 
   const clearDetail = () => {
+    modalPostDetail.style.display = 'none';
     for(item of postDetailContainer.children)
       item.innerText = '';
   }
 
+  const clearVerifyModal = () => {
+    verifyModal.style.display = 'none';
+    verifyPassword.value = '';
+  }
+
   closeModalBtn.addEventListener('click', () => {
     modalBg.style.display = 'none';
-    writeFormContainer.style.display = 'none';
-    modalPostDetail.style.display = 'none';
-    deleteConfirmModal.style.display = 'none';
-    postDeletePaswword.value = '';
     clearForm();
     clearDetail();
+    clearVerifyModal();
   });
 
   postWriteBtn.addEventListener('click', () => {
@@ -114,19 +118,20 @@
     writeForm.submit();
   });
 
-  postDeleteBtn.addEventListener('click', () => {
-    const postId = postDetailContainer.children['post-detail-title'].dataset.id;
-    deleteConfirmModal.style.display = 'flex';
+  detailActionBtnCotnainer.addEventListener('click', (e) => {
+    if(e.target.tagName !== "BUTTON")
+      return;    
+    verifyModal.style.display = 'flex';
+    verifyAction = e.target.innerText;
+  })
+  verifyCancelBtn.addEventListener('click', () => {
+    verifyModal.style.display = 'none';
+    verifyPassword.value = '';
   })
 
-  deleteCancelBtn.addEventListener('click', () => {
-    deleteConfirmModal.style.display = 'none';
-    postDeletePaswword.value = '';
-  })
-
-  deleteConfirmBtn.addEventListener('click', async () => {
+  verifyActionBtn.addEventListener('click', async () => {
     const postId = postDetailContainer.children['post-detail-title'].dataset.id
-    const postPassword = postDeletePaswword.value
+    const postPassword = verifyPassword.value
 
     if(postPassword === '') {
       alert('패스워드를 입력해주세요');
@@ -138,21 +143,52 @@
       return;
     }
 
-    const response = await fetch(`${SERVER_URL}/posts/${postId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type' : 'application/json' ,
-      },
-      body: JSON.stringify({ password : postPassword })
-    });
+    if(verifyAction === '삭제') {
+      const response = await fetch(`${SERVER_URL}/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type' : 'application/json' ,
+        },
+        body: JSON.stringify({ password : postPassword })
+      });
 
-    if(response.ok) {
-      const result = await response.json();
-      alert(result.message);
-      location.reload();
-    } else {
-      const error = await response.json();
-      alert(error.message);
+      if(response.ok) {
+        const result = await response.json();
+        alert(result.message);
+        location.reload();
+      } else {
+        const error = await response.json();
+        alert(error.message);
+      }
+
+      return;
+    }
+
+    if(verifyAction === '수정') {
+      const response = await fetch(`${SERVER_URL}/posts/${postId}/check-permission`, {
+        method: 'POST',
+        headers: {
+          'Content-Type' : 'application/json',
+        },
+        body: JSON.stringify({ password : postPassword }),
+      });
+
+      if(response.ok) {
+        const result = await response.json();
+        clearDetail();
+        clearVerifyModal();
+        writeFormContainer.style.display = 'block';
+        writeForm.action = `/posts/${postId}?_method=PUT`;
+        writeForm['title'].value = result['title'];
+        const content = writeForm['content'].value = result['content'];
+        const name = writeForm['name'].value = result['name'];
+        const password = writeForm['password'].value = result['password'];
+      } else {
+        const error = await response.json();
+        alert(error.message);
+      }
+
+      return;
     }
   })
   

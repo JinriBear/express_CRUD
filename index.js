@@ -79,10 +79,38 @@ app.delete('/posts/:id', (req, res) => {
   if(searchPost.password !== postPassword) {
     res.status(401).json({ message: '비밀번호가 틀렸습니다.'});
     return;
-  }
+  };
   
   postsData.splice(searchPostIndex, 1);
   res.json({ message: '게시글이 삭제되었습니다.' });
+})
+
+app.post('/posts/:id/check-permission', (req, res) => {
+  const postId = Number(req.params.id);
+  const postPassword = req.body.password;
+  const searchPost = postsData.find(post => post.id === postId);
+
+  if(searchPost.password !== postPassword) {
+    res.status(401).json({ message: '비밀번호가 틀렸습니다.'});
+    return;
+  };
+
+  res.json(searchPost);
+})
+
+app.put('/posts/:id', (req, res) => {
+  const postId = Number(req.params.id);
+  const newPost = req.body
+  
+  postsData.forEach((post) => {
+    if(post.id === postId){
+      post.title = newPost.title;
+      post.content = newPost.content;
+      post.name = newPost.name;
+      post.password = newPost.password;
+    }
+  });
+  res.redirect('/');
 })
 
 app.listen(PORT, () => {
