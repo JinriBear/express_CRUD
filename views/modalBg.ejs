@@ -8,40 +8,8 @@
         </svg>
       </button>
     </div>
-    <div id="modal-post-write">
-      <form id="write-form" method="POST">
-        <div class="form-input-container">
-          <input id="form-post-title" name="title" type="text" placeholder="제목">
-          <textarea id="form-post-content" name="content" rows="10"  placeholder="내용"></textarea>
-          <div class="form-input-guest">
-            <input id="form-post-name" name="name" type="text" placeholder="이름">
-            <input id="form-post-password" name="password" type="password" maxlength="4" placeholder="비밀번호">
-          </div>
-          <div class="post-write-button-container">
-            <button type="button" id="post-write-button" class="btn">작성</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div id="modal-post-detail">
-      <div id="post-detail-container">
-        <h2 id="post-detail-title"></h2>
-        <div id="post-detail-name"></div>
-        <p id="post-detail-content"></p>
-      </div>
-      <div id="detail-action-button-container">
-        <button id="post-modify-button" class="btn">수정</button>
-        <button id="post-delete-button" class="btn">삭제</button>
-      </div>
-      <div id="verify-modal">
-        <p>비밀번호를 입력하세요</p>
-        <input id="verify-password" type="password" maxlength="4" placeholder="비밀번호">
-        <div id="verify-buttons">
-          <button id="verify-cancel-button" class="btn">닫기</button>
-          <button id="verify-action-button" class="btn">확인</button>
-        </div>
-      </div>
-    </div>
+    <%- include('modals/form'); %>
+    <%- include('modals/detail'); %>
   </div>
 </div>
 
