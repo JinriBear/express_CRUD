@@ -68,7 +68,7 @@ const checkPermission = (req, res) => {
     return;
   };
 
-  res.status(200).json( searchPost );
+  res.status(200).json(searchPost);
 }
 
 const updatePost = (req, res) => {
@@ -91,5 +91,6 @@ module.exports = {
   getDetailPost,
   createPost,
   deletePost,
+  checkPermission,
   updatePost,
 }
