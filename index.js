@@ -4,9 +4,11 @@ const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 const methodOverride = require('method-override')
+
 const URL = process.env.SERVER_URL
 const PORT = process.env.PORT || 3000;
 
+const { connectDB, getDB } = require('./db/db.js');
 const postsRouter = require('./routes/posts.js');
 const postsController = require('./controllers/postsController.js');
 
@@ -17,23 +19,40 @@ app.use(express.json());
 app.use(cors());
 app.use(methodOverride('_method'))
 
-
-
 app.use('/posts', postsRouter);
 
-app.get('/', (req, res) => {
-  const postsList = postsController.postsData.map(post => {
-    return {
-      id: post.id,
-      title: post.title,
-      name: post.name,
-    }
-  });
-  res.render('index', { postsList, URL });
+app.get('/', async (req, res) => {
+
+  try {
+    const db = getDB();
+    const result = await db.collection('board').find().project({
+      title: 1,
+      name: 1,
+    }).toArray();
+
+    const postsList = result.map(post => {
+      return {
+        id: post._id.toString(),
+        title: post.title,
+        name: post.name,
+      }
+    });
+
+    res.render('index', { postsList, URL });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 })
 
-app.listen(PORT, () => {
-  console.log(`Server on... http://localhost:${PORT}`);
+connectDB()
+.then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server on... http://localhost:${PORT}`);
+  })
+})
+.catch((error) => {
+  console.error('Server Failed... ', error);
 })
 
 
